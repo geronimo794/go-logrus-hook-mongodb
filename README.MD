@@ -1,0 +1,1 @@
+# Simple Logrus Hook MongoDB
