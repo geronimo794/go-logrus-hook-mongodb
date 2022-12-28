@@ -41,6 +41,7 @@ func init() {
 	db = "db-test"
 	coll = "collection-test"
 }
+
 func TestNewHookConnectionString_Success(t *testing.T) {
 	log := logrus.New()
 	hook, err := mongolog.NewHookConnectionString(connectionString, db, coll)
