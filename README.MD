@@ -34,8 +34,22 @@ Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com
 		log.Error("Error log")
 	}
 	```
-1. Use your mongoDB configuration
-1. Use your pre existiong *mongo.Client
+1. Use with mongoDB configuration host, port, username, password.
+	```go
+	// On progress
+	```
+1. Use with pre existiong _*mongo.Client_
+	```go
+	// On progress
+	```
+1. Use with pre existiong _*mongo.Database_
+	```go
+	// On progress
+	```
+1. Use with pre existiong _*mongo.Collection_
+	```go
+	// On progress
+	```
 
 ## Planned Update
 1. **NewHook(...)**: Create hook with mongoDB configuration like host, port, username, and password.
