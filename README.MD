@@ -1,5 +1,6 @@
-# Mongolog: Simple Logrus Hook for MongoDB
-Inspired by https://github.com/weekface/mgorus
+# Mongolog
+Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com/hTeVwmJ.png" width="20" height="20" alt=":walrus:" class="emoji" title=":walrus:"/> hook for MongoDB.
+
 ## Usage
 
 ```go
@@ -29,4 +30,9 @@ func main() {
 	log.Error("Error log")
 }
 ```
+
+
+
+_This repo inspired by [mgorus](https://github.com/weekface/mgorus)_
+
 
