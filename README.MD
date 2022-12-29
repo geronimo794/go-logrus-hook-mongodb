@@ -13,7 +13,9 @@ Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com
 
 	func main() {
 		// Create mongolog hook
-		connectionString := "mongodb+srv://<username>:<password>@<host>/?retryWrites=true&w=majority"
+		var connectionString = "mongodb+srv://<username>:<password>@<host>/?retryWrites=true&w=majority"
+		var db = "db"
+		var coll = "coll"
 		hook, err := mongolog.NewHookConnectionString(connectionString, db, coll)
 
 		// New logrus
@@ -27,7 +29,7 @@ Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com
 		// Create log
 		log.WithFields(logrus.Fields{
 			"name": "Ach Rozikin",
-		})
+		}).Error("Error log")
 
 		log.Warn("Warning log")
 		log.Trace("Trace log")
@@ -36,26 +38,155 @@ Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com
 	```
 1. Use with mongoDB configuration host, port, username, password.
 	```go
-	// On progress
+	package main
+
+	import (
+		"github.com/sirupsen/logrus"
+		"github.com/geronimo794/go-mongolog"
+	)
+
+	func main() {
+		// Create mongolog hook
+		var mongoHost = "host"
+		var mongoUsername = "username"
+		var mongoPassword = "password"
+		var mongoPort = "port"
+		var db = "db"
+		var coll = "coll"
+
+		hook, err := mongolog.NewHook(mongoHost, mongoPort, mongoUsername, mongoPassword, db, coll)
+
+		// Create log
+		log := logrus.New()
+		if err == nil {
+			log.Hooks.Add(hook)
+		} else {
+			fmt.Print(err)
+		}
+		log.WithFields(logrus.Fields{
+			"name": "Ach Rozikin",
+		}).Error("Error log")
+
+		log.Warn("Warning log")
+		log.Trace("Trace log")
+		log.Error("Error log")
+	}	
 	```
 1. Use with pre existiong _*mongo.Client_
 	```go
-	// On progress
+	package main
+
+	import (
+		"github.com/sirupsen/logrus"
+		"github.com/geronimo794/go-mongolog"
+		"go.mongodb.org/mongo-driver/mongo"
+		"go.mongodb.org/mongo-driver/mongo/options"
+	)
+
+	func main() {
+		// Create connection string for create client connection
+		connectionString := "mongodb+srv://<username>:<password>@<host>/?retryWrites=true&w=majority"
+		client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connectionString))
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		// Create mongolog hook
+		var db = "db"
+		var coll = "coll"
+		hook, err := mongolog.NewHookClient(client, db, coll)
+
+		// Create log
+		log := logrus.New()
+		if err == nil {
+			log.Hooks.Add(hook)
+		} else {
+			fmt.Print(err)
+		}
+		log.WithFields(logrus.Fields{
+			"name": "Ach Rozikin",
+		}).Error("Error log")
+
+		log.Warn("Warning log")
+		log.Trace("Trace log")
+		log.Error("Error log")
+	}	
 	```
 1. Use with pre existiong _*mongo.Database_
 	```go
-	// On progress
+	package main
+
+	import (
+		"github.com/sirupsen/logrus"
+		"github.com/geronimo794/go-mongolog"
+		"go.mongodb.org/mongo-driver/mongo"
+		"go.mongodb.org/mongo-driver/mongo/options"
+	)
+
+	func main() {
+		// Create connection string for create client connection
+		connectionString := "mongodb+srv://<username>:<password>@<host>/?retryWrites=true&w=majority"
+		client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connectionString))
+		if err != nil {
+			fmt.Print(err)
+		}
+		database := client.Database(db)
+
+
+		// Create mongolog hook
+		var coll = "coll"
+		hook, err := mongolog.NewHookDatabase(database, coll)
+
+		// Create log
+		log := logrus.New()
+		if err == nil {
+			log.Hooks.Add(hook)
+		} else {
+			fmt.Print(err)
+		}
+		log.WithFields(logrus.Fields{
+			"name": "Ach Rozikin",
+		}).Error("Error log")
+
+		log.Warn("Warning log")
+		log.Trace("Trace log")
+		log.Error("Error log")
+	}	
 	```
 1. Use with pre existiong _*mongo.Collection_
 	```go
-	// On progress
+		connectionString := "mongodb+srv://<username>:<password>@<host>/?retryWrites=true&w=majority"
+		client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connectionString))
+		if err != nil {
+			fmt.Print(err)
+		}
+		coll := client.Database("db").Collection("coll")
+
+
+		// Create mongolog hook
+		hook, err := mongolog.NewHookCollection(coll)
+
+		// Create log
+		log := logrus.New()
+		if err == nil {
+			log.Hooks.Add(hook)
+		} else {
+			fmt.Print(err)
+		}
+		log.WithFields(logrus.Fields{
+			"name": "Ach Rozikin",
+		}).Error("Error log")
+
+		log.Warn("Warning log")
+		log.Trace("Trace log")
+		log.Error("Error log")
 	```
 
 ## Planned Update
-1. **NewHook(...)**: Create hook with mongoDB configuration like host, port, username, and password.
-1. **NewHookClient(...)**: Create hook with _*mongo.Client_ input
-1. **NewHookDatabase(...)**: Create hook with _*mongo.Database_ input
-1. **NewHookCollection(...)**: Create hook with _*mongo.Collection_ input
+1. **NewHook(...)**: Create hook with mongoDB configuration like host, port, username, and password. **[DONE]**
+1. **NewHookClient(...)**: Create hook with _*mongo.Client_ input **[DONE]**
+1. **NewHookDatabase(...)**: Create hook with _*mongo.Database_ input **[DONE]**
+1. **NewHookCollection(...)**: Create hook with _*mongo.Collection_ input **[DONE]**
 
 ## * Bonus
 Create docker container of *mongoDB* and *mongo-express*

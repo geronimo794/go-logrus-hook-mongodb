@@ -9,6 +9,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func NewHook(h string, p string, u string, pass string, db string, coll string) (*hook, error) {
+	cs := "mongodb://" + u + ":" + pass + "@" + h + ":" + p + "/?retryWrites=true&w=majority"
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(cs))
+	if err != nil {
+		return nil, err
+	}
+
+	return &hook{c: client.Database(db).Collection(coll)}, nil
+}
 func NewHookConnectionString(cs string, db string, coll string) (*hook, error) {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(cs))
 	if err != nil {
@@ -16,6 +25,15 @@ func NewHookConnectionString(cs string, db string, coll string) (*hook, error) {
 	}
 
 	return &hook{c: client.Database(db).Collection(coll)}, nil
+}
+func NewHookClient(client *mongo.Client, db string, coll string) (*hook, error) {
+	return &hook{c: client.Database(db).Collection(coll)}, nil
+}
+func NewHookDatabase(database *mongo.Database, coll string) (*hook, error) {
+	return &hook{c: database.Collection(coll)}, nil
+}
+func NewHookCollection(collection *mongo.Collection) (*hook, error) {
+	return &hook{c: collection}, nil
 }
 
 /**
