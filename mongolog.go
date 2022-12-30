@@ -33,17 +33,40 @@ func NewHookDatabase(database *mongo.Database, coll string) (*hook, error) {
 	return &hook{c: database.Collection(coll)}, nil
 }
 func NewHookCollection(collection *mongo.Collection) (*hook, error) {
-	return &hook{c: collection}, nil
+	return newHookStruct(collection), nil
 }
 
 /**
 * Hook struct for Logrus hook interface
 **/
 type hook struct {
-	c *mongo.Collection
+	c       *mongo.Collection
+	isAsync bool
+}
+
+// Function to create struct with default value
+func newHookStruct(C *mongo.Collection) *hook {
+	return &hook{c: C, isAsync: false}
 }
 
 func (h *hook) Fire(entry *logrus.Entry) error {
+	if h.isAsync {
+		go h.fireProcess(entry)
+		return nil
+	} else {
+		return h.fireProcess(entry)
+	}
+
+}
+func (h *hook) Levels() []logrus.Level {
+	return logrus.AllLevels
+}
+func (h *hook) SetIsAsync(IsAsync bool) {
+	h.isAsync = IsAsync
+}
+
+// Private function for internal process
+func (h *hook) fireProcess(entry *logrus.Entry) error {
 	data := make(logrus.Fields)
 	data["level"] = entry.Level.String()
 	data["time"] = entry.Time
@@ -63,8 +86,4 @@ func (h *hook) Fire(entry *logrus.Entry) error {
 	}
 
 	return nil
-}
-
-func (h *hook) Levels() []logrus.Level {
-	return logrus.AllLevels
 }

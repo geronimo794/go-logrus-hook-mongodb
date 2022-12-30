@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/geronimo794/go-mongolog"
 	"github.com/joho/godotenv"
@@ -148,4 +149,31 @@ func TestNewHookCollection_Success(t *testing.T) {
 	log.Warn("Warning log: TestNewHookCollection_Success")
 	log.Trace("Trace log: TestNewHookCollection_Success")
 	log.Error("Error log: TestNewHookCollection_Success")
+}
+func TestNewHookAsync_Success(t *testing.T) {
+	var mongoHost = os.Getenv("MONGO_DB_HOST_NATIVE")
+	var mongoUsername = os.Getenv("MONGO_DB_USERNAME")
+	var mongoPassword = os.Getenv("MONGO_DB_PASSWORD")
+	var mongoPort = os.Getenv("MONGO_DB_PORT")
+
+	log := logrus.New()
+	hook, err := mongolog.NewHook(mongoHost, mongoPort, mongoUsername, mongoPassword, db, coll)
+	if err == nil {
+		hook.SetIsAsync(true)
+		log.Hooks.Add(hook)
+	} else {
+		fmt.Print(err)
+	}
+
+	log.WithFields(logrus.Fields{
+		"name": "Ach Rozikin",
+	}).Error("TestNewHookAsync_Success")
+
+	log.Warn("Warning log: TestNewHookAsync_Success")
+	log.Error("Error log: TestNewHookAsync_Success")
+
+	fmt.Print("Save async")
+
+	// Sleep time to make sure async process is done
+	time.Sleep(10 * time.Second)
 }

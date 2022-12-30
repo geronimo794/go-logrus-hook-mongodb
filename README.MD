@@ -223,10 +223,9 @@ Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com
 	```
 
 ## Planned Update
-1. **NewHook(...)**: Create hook with mongoDB configuration like host, port, username, and password. **[DONE]**
-1. **NewHookClient(...)**: Create hook with _*mongo.Client_ input **[DONE]**
-1. **NewHookDatabase(...)**: Create hook with _*mongo.Database_ input **[DONE]**
-1. **NewHookCollection(...)**: Create hook with _*mongo.Collection_ input **[DONE]**
+1. **Async Feature**: Create async feature for logging process
+1. **Process Timeout**: Add process timeout feature for logging process
+1. **Context Setting**: Create input context for logging process
 
 ## * Bonus
 Create docker container of *mongoDB* and *mongo-express*
