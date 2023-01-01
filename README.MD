@@ -1,5 +1,6 @@
 # Mongolog
-Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com/hTeVwmJ.png" width="20" height="20" alt=":walrus:" class="emoji" title=":walrus:"/> hook for MongoDB.
+Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com/hTeVwmJ.png" width="20" height="20" alt=":walrus:" class="emoji" title=":walrus:"/> hook for MongoDB.<br />
+Main feature: **Async Feature**, **Write Timeout**, **Context Setting**, and **Failover File Logging**
 
 ## Usage
 1. Use with existing connection string (*You can use connection string from MongoDB atlas*)
