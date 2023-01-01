@@ -221,11 +221,49 @@ Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com
 		log.Error("Error log")
 	}
 	```
+## Feature
+1. **Async Feature**(_default=false_): Create the process of writing to mongodb asyncronushly. To activate the feature, call **SetIsAsync** with parameter **true**. If you use this feaature, make sure don't close the application before the process is done _(You can use time.Sleep(XXX * time.Second) to prevent application from close it's self)_
+	```go
+	log := logrus.New()
+	hook, err := mongolog.NewHook(mongoHost, mongoPort, mongoUsername, mongoPassword, db, coll)
+	if err == nil {
+		hook.SetIsAsync(true)
+		log.Hooks.Add(hook)
+	} else {
+		fmt.Print(err)
+	}
+	```
+1. **Write Timeout**(_default=0_): Add write timeout feature to set max timeout when writing data to the mongodb instance. You can set it via **SetWriteTimeout** method.
+	```go
+	log := logrus.New()
+	hook, err := mongolog.NewHook(mongoHost, mongoPort, mongoUsername, mongoPassword, db, coll)
+	if err == nil {
+		hook.SetWriteTimeout(1 * time.Second)
+		log.Hooks.Add(hook)
+	} else {
+		fmt.Print(err)
+	}
+	```
+1. **Context Setting**(_default=context.Background()_): You can set custom context to pass it to the hook. You can set it via **SetContext** method.
+	```go
+	log := logrus.New()
+	hook, err := mongolog.NewHook(mongoHost, mongoPort, mongoUsername, mongoPassword, db, coll)
+	if err == nil {
+		// Create context with timeout
+		ctx, ctxCancelFunc := context.WithTimeout(context.TODO(), 1*time.Second)
+		hook.SetContext(ctx)
+		log.Hooks.Add(hook)
+
+		defer ctxCancelFunc()
+	} else {
+		fmt.Print(err)
+	}
+	```
+*You can use **SetIsAsync** and **SetWriteTimeout** combination to prevent your application for goroutine leak. <br />
+*If you are using **SetWriteTimeout** and **Context Setting** at once. **Context Setting** value will be ignored by the hook process.
 
 ## Planned Update
-1. **Async Feature**: Create async feature for logging process
-1. **Process Timeout**: Add process timeout feature for logging process
-1. **Context Setting**: Create input context for logging process
+1. **Failover File Logging**: Create failover mechanisme when failed to write on mongodb database.
 
 ## * Bonus
 Create docker container of *mongoDB* and *mongo-express*

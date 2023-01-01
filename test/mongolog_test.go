@@ -177,3 +177,53 @@ func TestNewHookAsync_Success(t *testing.T) {
 	// Sleep time to make sure async process is done
 	time.Sleep(10 * time.Second)
 }
+func TestNewHookSetContext_Success(t *testing.T) {
+	var mongoHost = os.Getenv("MONGO_DB_HOST_NATIVE")
+	var mongoUsername = os.Getenv("MONGO_DB_USERNAME")
+	var mongoPassword = os.Getenv("MONGO_DB_PASSWORD")
+	var mongoPort = os.Getenv("MONGO_DB_PORT")
+
+	log := logrus.New()
+	hook, err := mongolog.NewHook(mongoHost, mongoPort, mongoUsername, mongoPassword, db, coll)
+	if err == nil {
+		// Create context with timeout
+		ctx, ctxCancelFunc := context.WithTimeout(context.TODO(), 1*time.Second)
+		hook.SetContext(ctx)
+		log.Hooks.Add(hook)
+
+		defer ctxCancelFunc()
+	} else {
+		fmt.Print(err)
+	}
+
+	log.WithFields(logrus.Fields{
+		"name": "Ach Rozikin",
+	}).Error("TestNewHookTimeout_Success")
+
+	log.Warn("Warning log: TestNewHookTimeout_Success")
+	log.Error("Error log: TestNewHookTimeout_Success")
+
+}
+func TestNewHookTimeout_Success(t *testing.T) {
+	var mongoHost = os.Getenv("MONGO_DB_HOST_NATIVE")
+	var mongoUsername = os.Getenv("MONGO_DB_USERNAME")
+	var mongoPassword = os.Getenv("MONGO_DB_PASSWORD")
+	var mongoPort = os.Getenv("MONGO_DB_PORT")
+
+	log := logrus.New()
+	hook, err := mongolog.NewHook(mongoHost, mongoPort, mongoUsername, mongoPassword, db, coll)
+	if err == nil {
+		hook.SetWriteTimeout(1 * time.Second)
+		log.Hooks.Add(hook)
+	} else {
+		fmt.Print(err)
+	}
+
+	log.WithFields(logrus.Fields{
+		"name": "Ach Rozikin",
+	}).Error("TestNewHookTimeout_Success")
+
+	log.Warn("Warning log: TestNewHookTimeout_Success")
+	log.Error("Error log: TestNewHookTimeout_Success")
+
+}
