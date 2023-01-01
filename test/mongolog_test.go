@@ -227,3 +227,30 @@ func TestNewHookTimeout_Success(t *testing.T) {
 	log.Error("Error log: TestNewHookTimeout_Success")
 
 }
+func TestNewHookFailoverFile_Success(t *testing.T) {
+	var mongoHost = os.Getenv("MONGO_DB_HOST_NATIVE")
+	var mongoUsername = os.Getenv("MONGO_DB_USERNAME")
+	var mongoPassword = os.Getenv("MONGO_DB_PASSWORD")
+	var mongoPort = os.Getenv("MONGO_DB_PORT")
+
+	log := logrus.New()
+	hook, err := mongolog.NewHook(mongoHost, mongoPort, mongoUsername, mongoPassword, db, coll)
+	if err == nil {
+		err = hook.SetFailoverFilePath("mongolog-failover.log")
+		if err == nil {
+			log.Hooks.Add(hook)
+		} else {
+			fmt.Print(err)
+		}
+	} else {
+		fmt.Print(err)
+	}
+
+	log.WithFields(logrus.Fields{
+		"name": "Ach Rozikin",
+	}).Error("TestNewHookFailoverFile_Success")
+
+	log.Warn("Warning log: TestNewHookFailoverFile_Success")
+	log.Error("Error log: TestNewHookFailoverFile_Success")
+
+}

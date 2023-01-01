@@ -3,6 +3,7 @@ package mongolog
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -46,11 +47,18 @@ type hook struct {
 	isAsync      bool
 	writeTimeout time.Duration
 	ctx          context.Context
+	failoverFile *os.File
 }
 
 // Function to create struct with default value
 func newHookStruct(C *mongo.Collection) *hook {
-	return &hook{c: C, isAsync: false, writeTimeout: 0, ctx: context.Background()}
+	return &hook{
+		c:            C,
+		isAsync:      false,
+		writeTimeout: 0,
+		ctx:          context.Background(),
+		failoverFile: nil,
+	}
 }
 
 func (h *hook) Fire(entry *logrus.Entry) error {
@@ -74,6 +82,14 @@ func (h *hook) SetWriteTimeout(Dur time.Duration) {
 func (h *hook) SetContext(Ctx context.Context) {
 	h.ctx = Ctx
 }
+func (h *hook) SetFailoverFilePath(F string) error {
+	file, err := os.OpenFile(F, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		return fmt.Errorf("failed to set failover file: %v", err)
+	}
+	h.failoverFile = file
+	return nil
+}
 
 // Private function for internal process
 func (h *hook) fireProcess(entry *logrus.Entry) error {
@@ -90,18 +106,34 @@ func (h *hook) fireProcess(entry *logrus.Entry) error {
 	data["level"] = entry.Level.String()
 	data["time"] = entry.Time
 	data["message"] = entry.Message
+	failoverText := entry.Time.String() + "\t" + entry.Level.String() + "\t" + entry.Message
 
 	for k, v := range entry.Data {
 		if errData, isError := v.(error); logrus.ErrorKey == k && v != nil && isError {
 			data[k] = errData.Error()
+			failoverText += "\t" + errData.Error()
 		} else {
 			data[k] = v
+			failoverText += "\t" + v.(string)
 		}
 	}
 	_, err := h.c.InsertOne(ctx, data)
 
 	if err != nil {
-		return fmt.Errorf("failed to save log: %v", err)
+		// If failoverFile is setted then append to text
+		if h.failoverFile != nil {
+			// Write log to file
+			if _, err := h.failoverFile.WriteString(failoverText + "\n"); err != nil {
+				return fmt.Errorf("failed to save log to failoverfile: %v", err)
+			}
+
+			// Write mongodb error to file
+			if _, err := h.failoverFile.WriteString(err.Error() + "\n"); err != nil {
+				return fmt.Errorf("failed to save mongodb error to failoverfile: %v", err)
+			}
+		}
+
+		return fmt.Errorf("failed to save log to mongodb: %v", err)
 	}
 
 	return nil

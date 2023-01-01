@@ -1,0 +1,8 @@
+2023-01-01 23:09:17.507291 +0700 WIB m=+0.004064001	error	TestNewHookFailoverFile_Success	Ach Rozikin
+server selection error: server selection timeout, current topology: { Type: Unknown, Servers: [{ Addr: localhost:27017, Type: Unknown, Last error: dial tcp [::1]:27017: connect: connection refused }, ] }
+2023-01-01 23:11:44.138691 +0700 WIB m=+0.007423876	error	TestNewHookFailoverFile_Success	Ach Rozikin
+server selection error: server selection timeout, current topology: { Type: Unknown, Servers: [{ Addr: localhost:27017, Type: Unknown, Last error: dial tcp [::1]:27017: connect: connection refused }, ] }
+2023-01-01 23:12:14.141031 +0700 WIB m=+30.009934793	warning	Warning log: TestNewHookFailoverFile_Success
+server selection error: server selection timeout, current topology: { Type: Unknown, Servers: [{ Addr: localhost:27017, Type: Unknown, Last error: dial tcp [::1]:27017: connect: connection refused }, ] }
+2023-01-01 23:12:44.141266 +0700 WIB m=+60.010339751	error	Error log: TestNewHookFailoverFile_Success
+server selection error: server selection timeout, current topology: { Type: Unknown, Servers: [{ Addr: localhost:27017, Type: Unknown, Last error: dial tcp [::1]:27017: connect: connection refused }, ] }

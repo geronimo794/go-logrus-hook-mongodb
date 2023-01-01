@@ -259,11 +259,27 @@ Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com
 		fmt.Print(err)
 	}
 	```
+1. **Failover File Logging**(_default=nil_): Set the failover file to save the log when the application failed to save the log on mongodb. You can set it via **SetFailoverFilePath** method.
+	```go
+	log := logrus.New()
+	hook, err := mongolog.NewHook(mongoHost, mongoPort, mongoUsername, mongoPassword, db, coll)
+	if err == nil {
+		err = hook.SetFailoverFilePath("mongolog-failover.log")
+		if err == nil {
+			log.Hooks.Add(hook)
+		} else {
+			fmt.Print(err)
+		}
+	} else {
+		fmt.Print(err)
+	}
+	```
 *You can use **SetIsAsync** and **SetWriteTimeout** combination to prevent your application for goroutine leak. <br />
-*If you are using **SetWriteTimeout** and **Context Setting** at once. **Context Setting** value will be ignored by the hook process.
+*If you are using **SetWriteTimeout** and **Context Setting** at once. **Context Setting** value will be ignored by the hook process.<br />
+*Be aware when using the **Failover File Logging**, keep this log is clean and clear (It's mean mongodb always success to save the log)
 
 ## Planned Update
-1. **Failover File Logging**: Create failover mechanisme when failed to write on mongodb database.
+1. **Failover File Logging**: Create failover mechanisme when failed to write on mongodb database. **[DONE]**
 
 ## * Bonus
 Create docker container of *mongoDB* and *mongo-express*
