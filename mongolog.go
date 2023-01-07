@@ -114,7 +114,8 @@ func (h *hook) fireProcess(entry *logrus.Entry) error {
 			failoverText += "\t" + errData.Error()
 		} else {
 			data[k] = v
-			failoverText += "\t" + v.(string)
+			valStr := fmt.Sprint(v)
+			failoverText += "\t" + valStr
 		}
 	}
 	_, err := h.c.InsertOne(ctx, data)
