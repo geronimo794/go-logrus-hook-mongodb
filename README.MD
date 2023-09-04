@@ -3,7 +3,7 @@ Simple [Logrus](https://github.com/sirupsen/logrus) <img src="http://i.imgur.com
 Main feature: **Async Feature**, **Write Timeout**, **Context Setting**, and **Failover File Logging**
 ## Download and install
 ```bash
-$ go get -u github.com/LyricTian/logrus-mongo-hook
+$ go get -u github.com/geronimo794/go-mongolog
 ```
 ## Usage
 1. Use with existing connection string (*You can use connection string from MongoDB atlas*)
